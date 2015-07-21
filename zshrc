@@ -1,4 +1,5 @@
-source antigen/antigen.zsh
+DOTFILES_DIR=~/dotfiles
+source $DOTFILES_DIR/antigen/antigen.zsh
 
 antigen bundle git
 # Syntax highlighting bundle.
