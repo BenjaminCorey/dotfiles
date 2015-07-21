@@ -14,6 +14,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'honza/vim-snippets'
 Plug 'flazz/vim-colorschemes'
 Plug 'easymotion/vim-easymotion'
+Plug 'chriskempson/base16-vim'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 call plug#end()
 
@@ -31,6 +32,10 @@ set modelines=0
 set title                " change the terminal's title
 set visualbell           " don't beep
 set noerrorbells         " don't beep
+set background=dark
+" Neovim Settings
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 " Replay macros in the q register with Q
 noremap Q @q
@@ -122,7 +127,7 @@ endif
 " Make it obvious where 80 characters is
 set textwidth=80
 set colorcolumn=+1
-colorscheme hybrid
+colorscheme base16-default
 let g:airline_powerline_fonts = 1
 set guifont=Menlo_for_Powerline:h14
 
@@ -186,3 +191,4 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
