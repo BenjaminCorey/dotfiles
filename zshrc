@@ -28,10 +28,11 @@ unsetopt nomatch
 # PATH
 export PATH="$HOME/.bin:$PATH"
 export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/sbin:$PATH"
 
 # RUBY
-export RUBY_HEAP_MIN_SLOTS=800000
-export RUBY_FREE_MIN=1000000
+export RUBY_GC_HEAP_INIT_SLOTS=800000
+export RUBY_GC_HEAP_FREE_SLOTS=1000000
 export RUBY_GC_MALLOC_LIMIT=200000000
 eval "$(rbenv init - --no-rehash zsh)"
 
