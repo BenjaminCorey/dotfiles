@@ -14,6 +14,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'honza/vim-snippets'
 Plug 'flazz/vim-colorschemes'
 Plug 'easymotion/vim-easymotion'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 call plug#end()
 
 filetype plugin indent on
