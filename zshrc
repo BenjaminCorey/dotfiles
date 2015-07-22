@@ -4,6 +4,7 @@ export EDITOR='nvim'
 export DOTFILES_DIR=~/dotfiles
 export MYVIMRC=~/.vimrc
 export MYZSHRC=~/.zshrc
+export RBENV_ROOT=~/.rbenv
 
 # ANTIGEN
 source $DOTFILES_DIR/antigen/antigen.zsh
