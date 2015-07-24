@@ -8,7 +8,6 @@ Plug 'SirVer/ultisnips'
 Plug 'bling/vim-airline'
 Plug 'scrooloose/syntastic'
 Plug 'pangloss/vim-javascript'
-Plug 'jelera/vim-javascript-syntax'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-surround'
@@ -48,6 +47,7 @@ let mapleader = ","
 
 " Use eshint for Syntastic
 let g:syntastic_javascript_checkers = ['eslint']
+let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
 " Copy and paste to the system clipboard
 vmap <Leader>y "+y
@@ -194,4 +194,4 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
-
+let g:syntastic_eruby_ruby_quiet_messages = {'regex': 'possibly useless use of a variable in void context'}
