@@ -18,6 +18,7 @@ Plug 'flazz/vim-colorschemes'
 Plug 'easymotion/vim-easymotion'
 Plug 'chriskempson/base16-vim'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+Plug 'mxw/vim-jsx'
 call plug#end()
 
 filetype plugin indent on
