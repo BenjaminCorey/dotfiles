@@ -57,13 +57,19 @@ alias vimconfig="nvim $MYVIMRC"
 alias zshconfig="nvim $MYZSHRC"
 function search-service-indexer() {
   cd $SITES/treehouse/projects/search/lucene
-  java -jar build/libs/lucene-all.jar indexer search.yml
+  java -jar build/libs/lucene-all.jar indexer search.yaml
   cd -
 }
 
 function search-service-server() {
   cd $SITES/treehouse/projects/search/lucene
-  java -jar build/libs/lucene-all.jar server search.yml
+  java -jar build/libs/lucene-all.jar server search.yaml
+  cd -
+}
+
+function aeon-service-server() {
+  cd $SITES/treehouse/projects/aeon/service
+  java -jar build/libs/service-all.jar server aeon.yaml
   cd -
 }
 
