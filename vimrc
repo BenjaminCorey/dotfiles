@@ -1,6 +1,7 @@
 call plug#begin()
 Plug 'tpope/vim-sensible'
 Plug 'kien/ctrlp.vim'
+Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'rking/ag.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tmhedberg/matchit'
@@ -18,6 +19,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'chriskempson/base16-vim'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 Plug 'mxw/vim-jsx'
+Plug 'junegunn/vim-easy-align'
 call plug#end()
 
 filetype plugin indent on
