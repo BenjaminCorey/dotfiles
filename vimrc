@@ -20,6 +20,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 Plug 'mxw/vim-jsx'
 Plug 'junegunn/vim-easy-align'
+Plug 'kchmck/vim-coffee-script'
 call plug#end()
 
 filetype plugin indent on
