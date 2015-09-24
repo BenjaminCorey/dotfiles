@@ -1,6 +1,7 @@
 call plug#begin()
 Plug 'tpope/vim-sensible'
-Plug 'kien/ctrlp.vim'
+Plug 'tpope/vim-unimpaired'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'rking/ag.vim'
 Plug 'jiangmiao/auto-pairs'
@@ -21,6 +22,7 @@ Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 Plug 'mxw/vim-jsx'
 Plug 'junegunn/vim-easy-align'
 Plug 'kchmck/vim-coffee-script'
+Plug 'marijnh/tern_for_vim', { 'do': 'npm install' }
 call plug#end()
 
 filetype plugin indent on
@@ -45,6 +47,7 @@ let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 " Replay macros in the q register with Q
 noremap Q @q
 
+noremap <leader>e :Explore<cr>
 " Map Leader to ,
 let mapleader = ","
 
@@ -53,16 +56,16 @@ let g:syntastic_javascript_checkers = ['eslint']
 let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 
 " Copy and paste to the system clipboard
-vmap <Leader>y "+y
-vmap <Leader>d "+d
-nmap <Leader>p "+p
-nmap <Leader>P "+P
-vmap <Leader>p "+p
-vmap <Leader>P "+P
+vnoremap <Leader>y "+y
+vnoremap <Leader>d "+d
+nnoremap <Leader>p "+p
+nnoremap <Leader>P "+P
+vnoremap <Leader>p "+p
+vnoremap <Leader>P "+P
 " Open the alternate buffer with Leader Leader
-nmap <leader>a <C-^>
+nnoremap <leader>a <C-^>
 " Visual line mode with leader v
-map <Leader>v V
+noremap <Leader>v V
 
 " Split Keys
 nnoremap <leader>w <C-w>v<C-w>l
@@ -124,7 +127,12 @@ if executable('ag')
   set grepprg=ag\ --nogroup\ --nocolor
 
   " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
+                                               \ --ignore .git
+                                               \ --ignore .svn
+                                               \ --ignore .hg
+                                               \ --ignore .DS_Store
+                                               \ -g ""'
 
   " ag is fast enough that CtrlP doesn't need to cache
   let g:ctrlp_use_caching = 0
@@ -177,7 +185,7 @@ inoremap <C-Tab> <c-r>=InsertTabWrapper()<cr>
 let g:Tlist_Ctags_Cmd="ctags --exclude='*.js'"
 
 " Index ctags from any project, including those outside Rails
-map <Leader>ct :!ctags -R .<CR>
+noremap <Leader>ct :!ctags -R .<CR>
 
 " Treat <li> and <p> tags like the block tags they are
 let g:html_indent_tags = 'li\|p'
