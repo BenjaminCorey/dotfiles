@@ -8,8 +8,9 @@
 [core]
 	editor = nvim
 	excludesfile = /Users/ben_wilkins/.gitignore_global
+	precomposeunicode = true
 [rerere]
-	enabled = true
+	enabled = 1
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 

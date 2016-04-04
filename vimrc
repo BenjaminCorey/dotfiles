@@ -1,28 +1,30 @@
 call plug#begin()
 Plug 'FelikZ/ctrlp-py-matcher'
 Plug 'SirVer/ultisnips'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
 Plug 'bling/vim-airline'
 Plug 'chriskempson/base16-vim'
 Plug 'ctrlpvim/ctrlp.vim'
+Plug 'othree/html5.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'flazz/vim-colorschemes'
 Plug 'honza/vim-snippets'
 Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/vim-easy-align'
 Plug 'kchmck/vim-coffee-script'
-Plug 'marijnh/tern_for_vim', { 'do': 'npm install' }
 Plug 'mattn/emmet-vim'
 Plug 'mxw/vim-jsx'
 Plug 'pangloss/vim-javascript'
 Plug 'rking/ag.vim'
 Plug 'scrooloose/syntastic'
+Plug 'pmsorhaindo/syntastic-local-eslint.vim'
 Plug 'tmhedberg/matchit'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rails'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
+Plug 'cakebaker/scss-syntax.vim'
 call plug#end()
 
 filetype plugin indent on
@@ -94,6 +96,11 @@ if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
   syntax on
 endif
 
+" Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+let g:ctrlp_use_caching = 0
+let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+
 augroup vimrcEx
   autocmd!
 
@@ -101,8 +108,8 @@ augroup vimrcEx
   " Don't do it for commit messages, when the position is invalid, or when
   " inside an event handler (happens when dropping a file on gvim).
   autocmd BufReadPost *
-        \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
-        \   exe "normal g`\"" |
+       \ if &ft != 'gitcommit' && line("'\"") > 0 && line("'\"") <= line("$") |
+       \   exe "normal g`\"" |
   " Set syntax highlighting for specific file types
   autocmd BufRead,BufNewFile Appraisals set filetype=ruby
   autocmd BufRead,BufNewFile *.md set filetype=markdown
@@ -125,17 +132,6 @@ augroup END
 if executable('ag')
   " Use Ag over Grep
   set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -i --nocolor --nogroup --hidden
-                                               \ --ignore .git
-                                               \ --ignore .svn
-                                               \ --ignore .hg
-                                               \ --ignore .DS_Store
-                                               \ -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
 endif
 
 " Make it obvious where 80 characters is
@@ -149,37 +145,17 @@ set guifont=Menlo_for_Powerline:h14
 set number
 set numberwidth=5
 
-function! g:UltiSnips_Complete()
-  call UltiSnips#ExpandSnippet()
-  if g:ulti_expand_res == 0
-    if pumvisible()
-      return "\<c-n>"
-    else
-      call UltiSnips#JumpForwards()
-      if g:ulti_jump_forwards_res == 0
-        return "\<tab>"
-      endif
-    endif
-  endif
-  return ""
-endfunction
-autocmd BufEnter * exec "inoremap <silent> " . g:UltiSnipsExpandTrigger . " <c-r>=g:UltiSnips_Complete()<cr>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsListSnippets="<c-e>"
+" YouCompleteMe and UltiSnips compatibility, with the helper of supertab
+" (via http://stackoverflow.com/a/22253548/1626737)
+let g:SuperTabDefaultCompletionType    = '<C-n>'
+let g:SuperTabCrMapping                = 0
+let g:UltiSnipsExpandTrigger           = '<tab>'
+let g:UltiSnipsJumpForwardTrigger      = '<tab>'
+let g:UltiSnipsJumpBackwardTrigger     = '<s-tab>'
+let g:ycm_key_list_select_completion   = ['<C-j>', '<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
 
-" will insert tab at beginning of line,
-" will use completion if not at beginning
 set wildmode=list:longest,list:full
-function! InsertTabWrapper()
-  let col = col('.') - 1
-  if !col || getline('.')[col - 1] !~ '\k'
-    return "\<tab>"
-  else
-    return "\<c-p>"
-  endif
-endfunction
-
-inoremap <C-Tab> <c-r>=InsertTabWrapper()<cr>
 
 " Exclude Javascript files in :Rtags via rails.vim due to warnings when parsing
 let g:Tlist_Ctags_Cmd="ctags --exclude='*.js'"

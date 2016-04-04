@@ -40,7 +40,7 @@ export PATH="${RBENV_ROOT}/bin:$PATH"
 export RUBY_GC_HEAP_INIT_SLOTS=800000
 export RUBY_GC_HEAP_FREE_SLOTS=1000000
 export RUBY_GC_MALLOC_LIMIT=200000000
-eval "$(rbenv init - --no-rehash zsh)"
+eval "$(rbenv init -)"
 
 # GOLDKEY
 export SSH_AUTH_SOCK=$TMPDIR/ssh-agent-$USER.sock
