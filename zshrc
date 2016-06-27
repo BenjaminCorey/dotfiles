@@ -55,6 +55,11 @@ alias vi='nvim'
 alias vim='nvim'
 alias vimconfig="nvim $MYVIMRC"
 alias zshconfig="nvim $MYZSHRC"
+
+export FZF_DEFAULT_OPTS='
+  --color=bw
+'
+
 function search-service-indexer() {
   cd $SITES/treehouse/projects/search/lucene
   java -jar build/libs/lucene-all.jar indexer search.yaml
