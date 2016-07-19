@@ -3,32 +3,26 @@ function! DoRemote(arg)
 endfunction
 
 call plug#begin()
-Plug 'junegunn/fzf', { 'do': './install --bin' }
-Plug 'junegunn/fzf.vim'
 Plug 'bling/vim-airline'
-Plug 'briancollins/vim-jst'
+Plug 'cakebaker/scss-syntax.vim'
 Plug 'chriskempson/base16-vim'
-Plug 'othree/html5.vim'
-Plug 'easymotion/vim-easymotion'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'jiangmiao/auto-pairs'
-Plug 'junegunn/vim-easy-align'
 Plug 'mattn/emmet-vim'
 Plug 'mxw/vim-jsx'
+Plug 'othree/html5.vim'
 Plug 'pangloss/vim-javascript'
+Plug 'pmsorhaindo/syntastic-local-eslint.vim'
 Plug 'scrooloose/syntastic'
 Plug 'sheerun/vim-polyglot'
-Plug 'pmsorhaindo/syntastic-local-eslint.vim'
+Plug 'shougo/deoplete.nvim', { 'do': function('DoRemote') }
+Plug 'shougo/neosnippet'
+Plug 'shougo/neosnippet-snippets'
 Plug 'tmhedberg/matchit'
 Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rails'
 Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
-Plug 'cakebaker/scss-syntax.vim'
-Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
-Plug 'Shougo/neosnippet'
-Plug 'Shougo/neosnippet-snippets'
-Plug 'honza/vim-snippets'
 call plug#end()
 
 set nocompatible
@@ -45,6 +39,7 @@ set title                " change the terminal's title
 set visualbell           " don't beep
 set noerrorbells         " don't beep
 set background=dark
+autocmd BufEnter * silent! lcd %:p:h
 " Neovim Settings
 set termguicolors
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
@@ -93,40 +88,22 @@ set incsearch     " do incremental searching
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
 
-" Customize FZF
-" This is the default extra key bindings
-let g:fzf_action = {
-  \ 'ctrl-t': 'tab split',
-  \ 'ctrl-x': 'split',
-  \ 'ctrl-v': 'vsplit' }
-
-" Default fzf layout
-" - down / up / left / right
-" - window (nvim only)
-let g:fzf_layout = { 'down': '~30%' }
-
-" [Buffers] Jump to the existing window if possible
-let g:fzf_buffers_jump = 1
-
-" [Tags] Command to generate tags file
-let g:fzf_tags_command = 'ctags -R'
-
-" [Commands] --expect expression for directly executing the command
-let g:fzf_commands_expect = 'alt-enter,ctrl-x'
-
-" Insert mode completion
-imap <c-x><c-k> <plug>(fzf-complete-word)
-imap <c-x><c-f> <plug>(fzf-complete-path)
-imap <c-x><c-j> <plug>(fzf-complete-file-ag)
-imap <c-x><c-l> <plug>(fzf-complete-line)
-
-nnoremap <c-p> :FZF<cr>
-
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#file#enable_buffer_path = 1
+
+if executable('ag')
+  " Use The Silver Searcher https://github.com/ggreer/the_silver_searcher
+  set grepprg=ag\ --nogroup\ --nocolor
+  " Use ag in CtrlP for listing files. Lightning fast, respects .gitignore
+  " and .agignore. Ignores hidden files by default.
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -f -g ""'
+else
+  "ctrl+p ignore files in .gitignore
+  let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
+endif
 
 augroup vimrcEx
   autocmd!
-
   " When editing a file, always jump to the last known cursor position.
   " Don't do it for commit messages, when the position is invalid, or when
   " inside an event handler (happens when dropping a file on gvim).
@@ -149,6 +126,8 @@ augroup vimrcEx
 
   " Allow stylesheets to autocomplete hyphenated words
   autocmd FileType css,scss,sass setlocal iskeyword+=-
+
+  autocmd FileType js,jsx setlocal textwidth=100
 augroup END
 
 " Make it obvious where 80 characters is
@@ -160,7 +139,7 @@ set guifont=Menlo_for_Powerline:h14
 
 " Numbers
 set number
-set numberwidth=5
+set numberwidth=4
 
 set wildmode=list:longest,list:full
 
@@ -201,51 +180,3 @@ function! s:neosnippet_complete()
 endfunction
 
 imap <expr><TAB> <SID>neosnippet_complete()
-
-" For conceal markers.
-if has('conceal')
-  set conceallevel=2 concealcursor=niv
-endif
-
-" Tell Neosnippet about the other snippets
-let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
-
-" Working Directory Functions
-" follow symlinked file
-function! FollowSymlink()
-  let current_file = expand('%:p')
-  " check if file type is a symlink
-  if getftype(current_file) == 'link'
-    " if it is a symlink resolve to the actual file path
-    "   and open the actual file
-    let actual_file = resolve(current_file)
-    silent! execute 'file ' . actual_file
-  end
-endfunction
-
-" set working directory to git project root
-" or directory of current file if not git project
-function! SetProjectRoot()
-  " default to the current file's directory
-  lcd %:p:h
-  let git_dir = system("git rev-parse --show-toplevel")
-  " See if the command output starts with 'fatal' (if it does, not in a git repo)
-  let is_not_git_dir = matchstr(git_dir, '^fatal:.*')
-  " if git project, change local directory to git project root
-  if empty(is_not_git_dir)
-    lcd `=git_dir`
-  endif
-endfunction
-
-" follow symlink and set working directory
-autocmd BufRead *
-  \ call FollowSymlink() |
-  \ call SetProjectRoot()
-
-" netrw: follow symlink and set working directory
-autocmd CursorMoved silent *
-  " short circuit for non-netrw files
-  \ if &filetype == 'netrw' |
-  \   call FollowSymlink() |
-  \   call SetProjectRoot() |
-  \ endif
