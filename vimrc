@@ -28,9 +28,9 @@ Plug 'cakebaker/scss-syntax.vim'
 Plug 'Shougo/deoplete.nvim', { 'do': function('DoRemote') }
 Plug 'Shougo/neosnippet'
 Plug 'Shougo/neosnippet-snippets'
+Plug 'honza/vim-snippets'
 call plug#end()
 
-filetype plugin indent on
 set nocompatible
 set number
 set numberwidth=5
@@ -46,7 +46,7 @@ set visualbell           " don't beep
 set noerrorbells         " don't beep
 set background=dark
 " Neovim Settings
-let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+set termguicolors
 let $NVIM_TUI_ENABLE_CURSOR_SHAPE=1
 
 " Replay macros in the q register with Q
@@ -92,12 +92,6 @@ set showcmd       " display incomplete commands
 set incsearch     " do incremental searching
 set laststatus=2  " Always display the status line
 set autowrite     " Automatically :write before running commands
-
-" Switch syntax highlighting on, when the terminal has colors
-" Also switch on highlighting the last used search pattern.
-if (&t_Co > 2 || has("gui_running")) && !exists("syntax_on")
-  syntax on
-endif
 
 " Customize FZF
 " This is the default extra key bindings
@@ -160,7 +154,7 @@ augroup END
 " Make it obvious where 80 characters is
 set textwidth=80
 set colorcolumn=+1
-colorscheme base16-default
+colorscheme base16-default-dark
 let g:airline_powerline_fonts = 1
 set guifont=Menlo_for_Powerline:h14
 
@@ -196,10 +190,14 @@ smap <C-k>     <Plug>(neosnippet_expand_or_jump)
 xmap <C-k>     <Plug>(neosnippet_expand_target)
 
 function! s:neosnippet_complete()
-  if neosnippet#expandable_or_jumpable() 
-    return "\<Plug>(neosnippet_expand_or_jump)"
+   if pumvisible()
+    return "\<c-n>"
+    else
+    if neosnippet#expandable_or_jumpable() 
+      return "\<Plug>(neosnippet_expand_or_jump)"
+    endif
+    return "\<tab>"
   endif
-  return "\<tab>"
 endfunction
 
 imap <expr><TAB> <SID>neosnippet_complete()
@@ -208,3 +206,46 @@ imap <expr><TAB> <SID>neosnippet_complete()
 if has('conceal')
   set conceallevel=2 concealcursor=niv
 endif
+
+" Tell Neosnippet about the other snippets
+let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
+
+" Working Directory Functions
+" follow symlinked file
+function! FollowSymlink()
+  let current_file = expand('%:p')
+  " check if file type is a symlink
+  if getftype(current_file) == 'link'
+    " if it is a symlink resolve to the actual file path
+    "   and open the actual file
+    let actual_file = resolve(current_file)
+    silent! execute 'file ' . actual_file
+  end
+endfunction
+
+" set working directory to git project root
+" or directory of current file if not git project
+function! SetProjectRoot()
+  " default to the current file's directory
+  lcd %:p:h
+  let git_dir = system("git rev-parse --show-toplevel")
+  " See if the command output starts with 'fatal' (if it does, not in a git repo)
+  let is_not_git_dir = matchstr(git_dir, '^fatal:.*')
+  " if git project, change local directory to git project root
+  if empty(is_not_git_dir)
+    lcd `=git_dir`
+  endif
+endfunction
+
+" follow symlink and set working directory
+autocmd BufRead *
+  \ call FollowSymlink() |
+  \ call SetProjectRoot()
+
+" netrw: follow symlink and set working directory
+autocmd CursorMoved silent *
+  " short circuit for non-netrw files
+  \ if &filetype == 'netrw' |
+  \   call FollowSymlink() |
+  \   call SetProjectRoot() |
+  \ endif
